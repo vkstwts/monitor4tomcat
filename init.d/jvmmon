@@ -1,0 +1,178 @@
+#!/bin/bash
+
+############################################################################
+# sample java tomcat_monitor init.d file
+############################################################################
+# Copyright 2006 Bluestone Consulting Group, Inc. All Rights Reserved.
+#    www.bluestone-consulting.com
+#
+# Released under the terms of the Apache 2 License.
+#
+
+# Basic support for IRIX style chkconfig
+###
+# chkconfig: 235 97 03
+# description: Manages a tomcat java application service
+###
+
+
+method=$1
+
+# change this profile name / location to whatever is appropriate for your
+#   application
+
+#. /etc/tomcat-application.conf
+. /etc/monitor_tomcat.conf
+
+if [ -f $MONITOR_HOME/monitor_tomcat_funcs.sh ] ; then
+. $MONITOR_HOME/monitor_tomcat_funcs.sh
+fi;
+
+startMultiJvm() {
+  if [ -d "$MONITOR_HOME" ] ; then
+    #su $MONITOR_HOME -c "cd $MONITOR_HOME; ./startup.sh";
+    $MONITOR_HOME/startup.sh $*
+  fi;
+}
+
+stopMultiJvm() {
+  if [ -d "$MONITOR_HOME" ] ; then
+    #su $MONITOR_HOME -c "cd $MONITOR_HOME; ./stop.sh";
+    $MONITOR_HOME/shutdown.sh $*
+  fi;  
+}
+
+killMultiJvm() {
+  if [ -x /usr/bin/pgrep ] ; then
+    # When asking tomcat to politely stop is not enough. 
+    # find out which users are running tomcat and kill their java
+    # processes.
+
+    get_tomcat_entries | while read entry
+    do
+      parse_jvm_entry "$entry"; 
+      echo JVM_TOMCAT_USER=$JVM_TOMCAT_USER
+      pids=`/usr/bin/pgrep -u $JVM_TOMCAT_USER java`
+
+      if [ "X$pids" != "X" ] ; then
+         kill $pids
+         sleep 5
+         kill -9 $pids
+      fi;
+    done;
+
+  else 
+    if [ -x /usr/loca/bin/nkill ] ; then
+      /usr/local/bin/nkill java;
+    fi;
+  fi;
+}
+
+manageDatabase() {
+  action=$1
+
+  if [ "X$DB_INITSCRIPT" != "X" ] ; then
+    $DB_INITSCRIPT $action >> $INIT_LOG 2>&1
+  fi;
+}
+
+manageApache() {
+  action=$1
+
+  if [ "X$APACHE_INITSCRIPT" != "X" ] ; then
+    $APACHE_INITSCRIPT $action >> $INIT_LOG 2>&1
+  fi;
+}
+
+case $method in
+start)
+
+  if [ $# -gt 1 ] ; then
+    jvms="$2 $3 $4 $5 $6 $7 $8 $9"
+  else 
+    jvms=""
+  fi;
+
+  echo jvms=$jvms
+
+  if [ "X$jvms" = "X" ] ; then
+     # start all the tomcat jvms plus application resources.
+     appPluginPreStart
+
+     # start your database if necessary
+     manageDatabase start
+
+     # start apache if you are using it and would like to control it here
+     manageApache start
+
+     # start Tomcat instances managed by monitor_tomcat
+     startMultiJvm
+
+     # start the monitor
+     nohup $MONITOR_HOME/monitor_tomcat.sh &
+
+     # start plugins after the start is complete
+     appPluginPostStart
+  else
+     # start specified jvms, assuming everything else is running db, apache
+     for jvm in $jvms
+     do
+        startMultiJvm $jvm
+     done; 
+  fi;
+  ;;
+stop)
+  if [ $# -gt 1 ] ; then
+    jvms="$2 $3 $4 $5 $6 $7 $8 $9"
+  else 
+    jvms=""
+  fi;
+
+  echo jvms=$jvms
+
+  if [ "X$jvms" = "X" ] ; then
+     if [ -f $PIDFILE ] ; then
+       kill `cat $PIDFILE`
+     fi;
+
+     # stop all jvms and application resources
+     stopMultiJvm;
+
+     # stop apache if necessary
+     manageApache stop
+
+     # stop your database if necessary
+     manageDatabase stop
+  
+     killMultiJvm;
+  else 
+     # stop specified jvms
+     for jvm in $jvms
+     do
+        stopMultiJvm $jvm
+     done;
+  fi;
+  ;;
+list)
+  # list the jvms in the tab file
+  $MONITOR_HOME/lsjvms.sh
+  ;;
+
+#deploy)
+#  shift
+#  deployMultiJvm $*
+#  ;;
+
+restart)
+  script=$0
+
+  if [ $# -gt 1 ] ; then
+    jvms="$2 $3 $4 $5 $6 $7 $8 $9"
+  else 
+    jvms=""
+  fi;
+
+  /etc/init.d/`basename $script` stop $jvms
+  /etc/init.d/`basename $script` start $jvms
+  ;;
+esac

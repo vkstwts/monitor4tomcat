@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#############################################################################
+# An example of a plugin that rotates catalina.out after a JVM shutdown.
+#############################################################################
+# 
+
+# create logrotate.conf
+
+LOGROTATE=/usr/sbin/logrotate
+
+
+if [ -x $LOGROTATE ] ; then
+
+  LOGROTATE_CONF=$TOMCAT_HOME/conf/logrotate.conf
+
+  cat <<EOF > $LOGROTATE_CONF
+compress
+
+$TOMCAT_HOME/logs/catalina.out {
+  rotate 5
+  size=5M
+  missingok
+}
+EOF
+
+  $LOGROTATE --force $LOGROTATE_CONF
+
+fi;
+

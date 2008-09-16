@@ -1,0 +1,19 @@
+#########################################################################
+# tomcat-jvm-tab
+#########################################################################
+# List of all jvms running on the server
+#
+# jvm-name=Name of the JVM to differientiate if from other JVMs.
+# user=Unix User who owns the Tomcat process
+# tomcat-home=Home directory for this Tomcat instance.
+# web-port=HTTP connector port of the instance.
+# shutdown-port=Tomcat shutdown port for the instance.
+# test-uri=Test URI available on the web-port to verify the instance is 
+#           serving requests
+# test-string=Text to find in the HTML returned by the test-uri
+# ajp-port=Tomcat AJP Port for the instance
+# jvm_opts=Additional JVM options to be used to start the instance. Place 
+#           your Java JVM memory settings go here.
+#
+#jvm-name:user:tomcat-home:web-port:shutdown-port:ajp-port:test-uri:test-string:jvm-opts
+rseward:rseward:/bluestone/apache-tomcat-5.5.17:8080:8005:8009:/noplace/index.html:noPlace.com:-server -Xmx128m:

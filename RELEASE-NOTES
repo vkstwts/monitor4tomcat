@@ -1,0 +1,8 @@
+==============================================================================
+Tue Dec  9 10:43:43 EST 2008
+==============================================================================
+
+* Improved Apache Restart code to be configurable for the platform.
+* Improved the example/monitor_tomcat.conf file
+* Added notes for dynamic sudo/su strategy for starting tomcat in startup.sh
+ 

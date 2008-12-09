@@ -54,8 +54,10 @@ do
   else
     #echo su -c bin/startup.sh $JVM_TOMCAT_USER
     #su  -c bin/startup.sh $JVM_TOMCAT_USER
-    echo sudo -u $JVM_TOMCAT_USER `pwd`/bin/startup.sh
-    sudo -u $JVM_TOMCAT_USER $TOMCAT_HOME/bin/startup.sh
+    # TODO: make the selection of sudo/su strategy dynmanic
+    # TODO:  ubuntu/rhel/fedora all need different strategies
+    echo sudo -E -u $JVM_TOMCAT_USER `pwd`/bin/startup.sh
+    sudo -E -u $JVM_TOMCAT_USER $TOMCAT_HOME/bin/startup.sh
   fi;
 
   jvmPluginPostStart $TOMCAT_HOME

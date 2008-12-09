@@ -3,7 +3,7 @@
 home=$1
 
 if [ "x$home" = "x" ] ; then
-  home=/usr/local/monitor_tomcat
+  home=/usr/local/monitor4tomcat
 fi;
 
 export MONITOR_HOME=$home

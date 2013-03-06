@@ -7,6 +7,10 @@ unset http_proxy
 
 export MONLOG=$MONITOR_HOME/monitor_multi_jvms.log
 
+# Choose perl or python helper script
+#FILE_PORTION=$MONITOR_HOME/filePortion.perl 
+FILE_PORTION=$MONITOR_HOME/filePortion.py 
+
 trap 'rm -f $LOCK_FILE; echo "Aborting monitor_tomcat.sh"; exit' 1 2 3 15
 
 ############################################################################
@@ -143,8 +147,10 @@ check_for_out_of_memory() {
 
   diffpos=`expr $newpos - $oldpos`
   if [ $diffpos -gt 10 ] ; then
-    echo $MONITOR_HOME/filePortion.perl $tomcatlog $oldpos 
-    $MONITOR_HOME/filePortion.perl $tomcatlog $oldpos | grep "OutOfMemoryError"
+    echo $FILE_PORTION $tomcatlog $oldpos 
+    $FILE_PORTION $tomcatlog $oldpos | grep "OutOfMemoryError"
+    #$MONITOR_HOME/filePortion.perl $tomcatlog $oldpos | grep "OutOfMemoryError"
+
     if [ $? -eq 0 ] ; then
       echo "WARNING OutOfMemoryError found!";
       errorFound=1;
@@ -207,7 +213,7 @@ do
     catalina_pid=$JVM_TOMCAT_HOME/logs/tomcat.pid
 
     if [ -f $catalina_pid ] ; then
-      # monitor_tomcat is currently maanging this active tomcat instance
+      # monitor_tomcat is currently manging this active tomcat instance
       # e.g. the instance has not been stopped by this script.
 
       echo Watching $jvm
@@ -251,7 +257,7 @@ do
   java_not_running=$?
 
   if [ $APACHE_ENABLE_CHECK -eq 1 ] ; then
-    ps -ef | grep -v grep | grep http > /dev/null
+    ps -ef | grep -v grep | grep $APACHE_PROCESS > /dev/null
     http_not_running=$?
   else
     http_not_running=0;
@@ -272,10 +278,11 @@ do
 
   if [ $do_apache_check -eq 1 ] ; then
     rm -f $apacheRes
-    echo $WGET --tries=1 --output-document=$apacheRes --timeout=25 $APACHE_TEST_URL
-    $WGET --tries=1 --output-document=$apacheRes --timeout=25 $APACHE_TEST_URL
+    echo $WGET --tries=2 --output-document=$apacheRes --timeout=25 $APACHE_TEST_URL
+    $WGET --tries=2 --output-document=$apacheRes --timeout=25 $APACHE_TEST_URL
     grep "$APP_TEST_TEXT" $apacheRes > /dev/null
     if [ $? -ne 0 ] ; then
+      cp $apacheRes $TMPDIR/apache-last-crash.html
       echo "`date`: Doh! The server is not responding" >> $MONLOG
       site_not_responding=1;
     fi;

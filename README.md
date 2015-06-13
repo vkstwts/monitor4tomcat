@@ -31,27 +31,28 @@ environments.
 Determine your location for the tomcat_monitor runtime directory. I suggest 
 /usr/local/tomcat_monitor. Untar the scripts into a staging directory.
 
-  tar -xvzf tomcat_monitor-0.2.tar.gz 
+`  tar -xvzf tomcat_monitor-0.2.tar.gz `
 
 Run the deploy script as root with the location of the runtime directory.
  
-
+```sh
   cd tomcat_monitor
   sudo ./deploy.sh /usr/local/tomcat_monitor
+```
 
 ### 3.0 CONFIGURATION
 
 #### 3.1 /etc/java.conf
 
-The /etc/java.conf stores the location of JAVA_HOME and adds JAVA_HOME to
-the PATH. See example/java.conf for an example file. 
+The /etc/java.conf stores the location of `JAVA_HOME` and adds `JAVA_HOME` to
+the `PATH`. See `example/java.conf` for an example file. 
 
 In normal circumstances the deploy.sh should detect your java and create a
-/etc/java.conf for you.
+`/etc/java.conf` for you.
 
 #### 3.2 /etc/tomcat-jvm-tab
 
-The tomcat-jvm-tab file defines all the tomcat JVMS you wish Tomcat Monitor
+The `tomcat-jvm-tab` file defines all the tomcat JVMS you wish Tomcat Monitor
 to start / stop / monitor for you.
 
 Here is an example of the format of the file. There will be one line in the 
@@ -79,18 +80,17 @@ file per JVM to be monitored.
   rseward:rseward:/bluestone/apache-tomcat-5.5.17:8080:8005:8009:/noplace/index.html:noPlace.com:-server -Xmx128m:
 ```
 
-#### 3.3 /etc/init.d/jvmmon (or your preferred name)
+#### 3.3 `/etc/init.d/jvmmon` (or your preferred name)
 
-  Copy the init.d/jvmmon script to /etc/init.d and customize it to match
-    your application.
+  Copy the `init.d/jvmmon` script to `/etc/init.d` and customize it to match your application.
 
-#### 3.4 /etc/monitor_tomcat.conf
+#### 3.4 `/etc/monitor_tomcat.conf`
 
-  Change the MONITOR_HOME to match the Tomcat Monitor runtime directory.
+  Change the `MONITOR_HOME` to match the Tomcat Monitor runtime directory.
 
-  Edit APP_INIT_SCRIPT to match your application's jvmmon init.d script.
+  Edit `APP_INIT_SCRIPT` to match your application's jvmmon `init.d` script.
 
-  Edit WATCH_SLEEP if you require the monitor to check the JVMS less or 
+  Edit `WATCH_SLEEP` if you require the monitor to check the JVMS less or 
     more often.
 
 ##### 3.4.1 Monitor Apache

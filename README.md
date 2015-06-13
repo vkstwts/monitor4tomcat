@@ -57,7 +57,7 @@ to start / stop / monitor for you.
 Here is an example of the format of the file. There will be one line in the 
 file per JVM to be monitored. 
 
-```
+```sh
   #########################################################################
   # tomcat-jvm-tab
   #########################################################################
@@ -107,7 +107,7 @@ file per JVM to be monitored.
     APACHE_TEST_TEXT. If this string is not found in three attempts
    the script will restart apache. 
 
-```
+```sh
   ###########################################################################
   # monitor_tomcat.conf
   ###########################################################################
@@ -151,9 +151,11 @@ If a log contains OutOfMemory the JVM instance will be restarted immediately.
 
   If you would like to observe monitor_tomcat at work.
 
+```sh
     sudo bash
     cd $MONITOR_HOME
     ./monitor_tomcat.sh
+```
 
 ### 4.2 Run as service
 

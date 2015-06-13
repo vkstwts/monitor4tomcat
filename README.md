@@ -49,7 +49,7 @@ the PATH. See example/java.conf for an example file.
 In normal circumstances the deploy.sh should detect your java and create a
 /etc/java.conf for you.
 
-### 3.2 /etc/tomcat-jvm-tab
+#### 3.2 /etc/tomcat-jvm-tab
 
 The tomcat-jvm-tab file defines all the tomcat JVMS you wish Tomcat Monitor
 to start / stop / monitor for you.
@@ -79,12 +79,12 @@ file per JVM to be monitored.
   rseward:rseward:/bluestone/apache-tomcat-5.5.17:8080:8005:8009:/noplace/index.html:noPlace.com:-server -Xmx128m:
 ```
 
-### 3.3 /etc/init.d/jvmmon (or your preferred name)
+#### 3.3 /etc/init.d/jvmmon (or your preferred name)
 
   Copy the init.d/jvmmon script to /etc/init.d and customize it to match
     your application.
 
-### 3.4 /etc/monitor_tomcat.conf
+#### 3.4 /etc/monitor_tomcat.conf
 
   Change the MONITOR_HOME to match the Tomcat Monitor runtime directory.
 
@@ -93,7 +93,7 @@ file per JVM to be monitored.
   Edit WATCH_SLEEP if you require the monitor to check the JVMS less or 
     more often.
 
-### 3.4.1 Monitor Apache
+##### 3.4.1 Monitor Apache
 
   Edit APACHE_ENABLE_CHECK if you use Apache with your application and
     want to monitor httpd along with Tomcat by this script.
